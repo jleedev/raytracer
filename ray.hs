@@ -78,7 +78,7 @@ render scene ((pos,dir),right,up) (width,height) =
     let dat = do y <- [1..height]
                  x <- [1..width]
                  let y' = 2 * fromIntegral y / fromIntegral height - 1
-                     x' = 2 * fromIntegral x / fromIntegral height - 1
+                     x' = 2 * fromIntegral x / fromIntegral width - 1
                      vec = dir .+ (right .* x') .+ (up .* y')
                      ray = (pos,vec)
                      (r,g,b) = raytrace scene ray
@@ -95,7 +95,7 @@ testCamera :: Camera
 testCamera = ((pos,dir),right,up)
     where pos = (0,0,-10)
           dir = (0,0,1)
-          right = (1,0,0)
+          right = (4/3,0,0)
           up = (0,1,0)
 
 writePNM :: Image -> FilePath -> IO ()
@@ -105,7 +105,7 @@ writePNM (width,height,dat) file = withFile file WriteMode $ \h -> do
 
 main :: IO ()
 main = do
-    let img = render testScene testCamera (400,400)
+    let img = render testScene testCamera (400,300)
     writePNM img "test.pnm"
 
 -- ax + b = 0
