@@ -5,9 +5,6 @@ import System.IO
 import Text.Printf
 import Control.Monad
 
-comparing :: (Ord a) => (t -> a) -> t -> t -> Ordering
-comparing p x y = p x `compare` p y
-
 type Vec3 = (Double,Double,Double)
 type Color = Vec3
 type Point = Vec3
@@ -17,7 +14,7 @@ type Scene = [AnyShape]
 type Camera = (Ray,Vec3,Vec3)
 type Image = (Int,Int,[Char])
 
-class (Show s) => Shape s where
+class Shape s where
     hit :: s -> Ray -> Hit
     normal :: s -> Vec3 -> Vec3
 
@@ -26,9 +23,6 @@ data AnyShape = forall s. Shape s => AnyShape s
 instance Shape AnyShape where
     hit (AnyShape s) = hit s
     normal (AnyShape s) = normal s
-
-instance Show AnyShape where
-    show (AnyShape s) = show s
 
 data Sphere = Sphere Vec3 Double deriving Show
 
@@ -62,6 +56,9 @@ instance Shape Sphere where
     normal (Sphere cn r) u = normalize (u .- cn)
 
 --data Plane = Plane Vec3 Vec3
+
+comparing :: (Ord a) => (t -> a) -> t -> t -> Ordering
+comparing p x y = p x `compare` p y
 
 raytrace :: Scene -> Ray -> Color
 raytrace scene ray@(u,v) =
