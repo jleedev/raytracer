@@ -32,12 +32,21 @@ instance Show AnyShape where
 
 data Sphere = Sphere Vec3 Double deriving Show
 
+normalize :: Vec3 -> Vec3
 normalize x = x .* (1/vec_mag x)
+
+vec_mag, vec_mag2 :: Vec3 -> Double
 vec_mag x = sqrt (vec_mag2 x)
 vec_mag2 x = x .*. x
+
+(.*.) :: Vec3 -> Vec3 -> Double
 (x1,y1,z1) .*. (x2,y2,z2) = x1*x2 + y1*y2 + z1*z2
+
+(.+),(.-) :: Vec3 -> Vec3 -> Vec3
 (x1,y1,z1) .+ (x2,y2,z2) = (x1+x2,y1+y2,z1+z2)
 (x1,y1,z1) .- (x2,y2,z2) = (x1-x2,y1-y2,z1-z2)
+
+(.*) :: Vec3 -> Double -> Vec3
 (x,y,z) .* s = (x*s,y*s,z*s)
 
 instance Shape Sphere where
@@ -94,6 +103,7 @@ writePNM (width,height,dat) file = withFile file WriteMode $ \h -> do
     hPrintf h "P6\n%d %d\n255\n" width height
     hPutStr h dat
 
+main :: IO ()
 main = do
     let img = render testScene testCamera (400,400)
     writePNM img "test.pnm"
