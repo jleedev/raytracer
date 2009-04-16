@@ -39,13 +39,16 @@ vec_mag, vec_mag2 :: Vec3 -> Double
 vec_mag x = sqrt (vec_mag2 x)
 vec_mag2 x = x .*. x
 
+infix 7 .*.
 (.*.) :: Vec3 -> Vec3 -> Double
 (x1,y1,z1) .*. (x2,y2,z2) = x1*x2 + y1*y2 + z1*z2
 
+infixl 6 .+, .-
 (.+),(.-) :: Vec3 -> Vec3 -> Vec3
 (x1,y1,z1) .+ (x2,y2,z2) = (x1+x2,y1+y2,z1+z2)
 (x1,y1,z1) .- (x2,y2,z2) = (x1-x2,y1-y2,z1-z2)
 
+infixl 7 .*
 (.*) :: Vec3 -> Double -> Vec3
 (x,y,z) .* s = (x*s,y*s,z*s)
 
@@ -70,8 +73,10 @@ raytrace scene ray@(u,v) =
             nor = normal s loc
         return (h,(loc,nor,s))
     in case hits of
-            [] -> (0,0,0)
-            ((_,(loc,nor,shape)):_) -> (1,1,1)
+            [] -> (1,0,1)
+            ((_,(loc,nor,shape)):_) ->
+                let intensity = normalize nor .*. (-1,1,-1)
+                in (1,1,1) .* intensity
 
 render :: Scene -> Camera -> (Int,Int) -> Image
 render scene ((pos,dir),right,up) (width,height) =
@@ -86,14 +91,17 @@ render scene ((pos,dir),right,up) (width,height) =
     in (width,height,dat)
 
 toByte :: Double -> Char
-toByte = toEnum . round . (*255)
+toByte = toEnum . clamp . round . (*255)
+    where clamp x | x > 255   = 255
+                  | x < 0     = 0
+                  | otherwise = x
 
 testScene :: Scene
 testScene = [AnyShape $ Sphere (x,y,0) 0.5 | x <- [-5..5], y <- [-5..5]]
 
 testCamera :: Camera
 testCamera = ((pos,dir),right,up)
-    where pos = (0,0,-10)
+    where pos = (0,0,-6)
           dir = (0,0,1)
           right = (4/3,0,0)
           up = (0,1,0)
