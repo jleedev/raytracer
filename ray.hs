@@ -60,9 +60,9 @@ raytrace scene ray@(u,v) =
         let loc = u .+ (v .* h)
             nor = normal s loc
         return (h,(loc,nor,s))
-        in case hits of
-                [] -> (0,0,0)
-                ((_,(loc,nor,shape)):_) -> (1,1,1)
+    in case hits of
+            [] -> (0,0,0)
+            ((_,(loc,nor,shape)):_) -> (1,1,1)
 
 render :: Scene -> Camera -> (Int,Int) -> Image
 render scene ((pos,dir),right,up) (width,height) =
@@ -80,10 +80,7 @@ toByte :: Double -> Char
 toByte = toEnum . round . (*255)
 
 testScene :: Scene
-testScene = do
-    x <- [-5..5]
-    y <- [-5..5]
-    return . AnyShape $ Sphere (x,y,0) 0.5
+testScene = [AnyShape $ Sphere (x,y,0) 0.5 | x <- [-5..5], y <- [-5..5]]
 
 testCamera :: Camera
 testCamera = ((pos,dir),right,up)
