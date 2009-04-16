@@ -80,7 +80,7 @@ raytrace scene ray@(u,v) =
 
 render :: Scene -> Camera -> (Int,Int) -> Image
 render scene ((pos,dir),right,up) (width,height) =
-    let dat = do y <- [1..height]
+    let dat = do y <- reverse [1..height]
                  x <- [1..width]
                  let y' = 2 * fromIntegral y / fromIntegral height - 1
                      x' = 2 * fromIntegral x / fromIntegral width - 1
